@@ -1,0 +1,9 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/api/predict", "destination": "/api/predict.py" },
+    { "source": "/api/tle",     "destination": "/api/tle.py"     },
+    { "source": "/(.*)",        "destination": "/index.html"     }
+  ]
+}
