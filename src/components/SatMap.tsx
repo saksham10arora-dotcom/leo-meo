@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import type { StationResult } from "../hooks/useSatellite";
-
 // Fix default icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -43,11 +41,18 @@ function FlyTo({ lat, lon }: { lat: number; lon: number }) {
   return null;
 }
 
+interface MapStation {
+  name: string;
+  lat: number;
+  lon: number;
+  score_now: number;
+}
+
 interface Props {
   satLat: number;
   satLon: number;
   satAlt: number;
-  stations: StationResult[];
+  stations: MapStation[];
   bestStation: string | null;
 }
 
@@ -79,18 +84,15 @@ export default function SatMap({ satLat, satLon, satAlt, stations, bestStation }
 
         {/* Ground stations */}
         {stations.map((s) => (
-          <div key={s.station}>
+          <div key={s.name}>
             <Marker
               position={[s.lat, s.lon]}
               icon={stationIcon(s.score_now)}
             >
               <Popup>
-                <strong>{s.station}</strong>
-                {s.station === bestStation && " ★ Best"}<br />
-                Visibility: {(s.score_now * 100).toFixed(1)}%<br />
-                Elevation: {s.elevation_deg.toFixed(1)}°<br />
-                Distance: {s.distance_km.toFixed(0)} km<br />
-                Rx Power: {s.rx_power_dbm.toFixed(1)} dBm
+                <strong>{s.name}</strong>
+                {s.name === bestStation && " ★ Best"}<br />
+                Score: {(s.score_now * 100).toFixed(1)}%
               </Popup>
             </Marker>
             <Circle
